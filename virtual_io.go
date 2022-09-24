@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -11,7 +12,7 @@ type VirtualIO struct {
 	scanner       *bufio.Scanner
 	writer        *bufio.Writer
 	inputFilePath string
-	inputText     string
+	inputLines    []string
 }
 
 // 新規作成
@@ -25,7 +26,7 @@ func NewVirtualIO() *VirtualIO {
 		scanner:       bufio.NewScanner(os.Stdin),
 		writer:        bufio.NewWriter(os.Stdout),
 		inputFilePath: "",
-		inputText:     "",
+		inputLines:    []string{},
 	}
 
 	// virtualIo.Scanner.Split(bufio.ScanWords) // 空白で区切る
@@ -46,31 +47,41 @@ func (vio *VirtualIO) SetInputFromFile(inputFilePath string) {
 	vio.inputFilePath = inputFilePath
 }
 
+var re = regexp.MustCompile("\r\n|\n")
+
 func (vio *VirtualIO) ScannerScan() bool {
 
 	// テキストファイルから読み込むなら
 	if vio.inputFilePath != "" {
 
-		var getText = func() string {
+		var popAllLines = func() []string {
 			// ファイル読込
 			var bytes, err = os.ReadFile(vio.inputFilePath)
 			if err != nil {
 				panic(err)
 			}
 
-			return string(bytes)
+			var text = string(bytes)
+
+			// ファイルを空にする
+			os.Truncate(vio.inputFilePath, 0)
+
+			// 全文を改行でスプリット
+			return re.Split(text, -1)
 		}
 
-		// 文字列取得
-		vio.inputText = getText()
+		// バッファーが空なら、ファイルから取ってくる
+		if len(vio.inputLines) == 0 {
+			vio.inputLines = popAllLines()
+		}
 
-		// 空文字でなくなるまでブロック（繰り返し）する
-		for vio.inputText == "" {
+		// バッファーが空の間ブロック（繰り返し）する
+		if len(vio.inputLines) == 0 {
 			// TODO 入力がないときブロックするという機能を入れないと、無限に空文字列を読み続けてしまう。1秒は長いが、しかたない
 			time.Sleep(1 * time.Second)
 
 			// 文字列取得
-			vio.inputText = getText()
+			vio.inputLines = popAllLines()
 		}
 
 		return true
@@ -83,7 +94,13 @@ func (vio *VirtualIO) ScannerText() string {
 
 	// テキストファイルから読み込むなら
 	if vio.inputFilePath != "" {
-		return vio.inputText
+		// 先頭の１行を取り出し
+		var firstLine = vio.inputLines[0]
+
+		// 繰り上がり
+		vio.inputLines = vio.inputLines[1:len(vio.inputLines)]
+
+		return firstLine
 	}
 
 	return vio.scanner.Text()

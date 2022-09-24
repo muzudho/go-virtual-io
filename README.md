@@ -41,3 +41,9 @@ Output:
 
 📖 [golangのAtCoder向けデバック方法(VSCode)](https://qiita.com/tasmas/items/d2d5a8c95fa48e415702)  
 📖 [scanner.Scan() hangs in GoLand debugger](https://stackoverflow.com/questions/53461228/scanner-scan-hangs-in-goland-debugger)  
+
+### 文字列
+
+📖 [Go言語 Split 文字列を分割して配列にする](https://itsakura.com/golang-split)  
+
+EOF
