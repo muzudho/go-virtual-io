@@ -9,10 +9,12 @@ import (
 
 // VirtualIO - 入出力を模擬したもの
 type VirtualIO struct {
-	scanner       *bufio.Scanner
-	writer        *bufio.Writer
+	scanner *bufio.Scanner
+	writer  *bufio.Writer
+
 	inputFilePath string
 	inputLines    []string
+	pollingTime   time.Duration
 }
 
 // 新規作成
@@ -27,6 +29,7 @@ func NewVirtualIO() *VirtualIO {
 		writer:        bufio.NewWriter(os.Stdout),
 		inputFilePath: "",
 		inputLines:    []string{},
+		pollingTime:   1 * time.Second,
 	}
 
 	// virtualIo.Scanner.Split(bufio.ScanWords) // 空白で区切る
@@ -78,7 +81,7 @@ func (vio *VirtualIO) ScannerScan() bool {
 		// バッファーが空の間ブロック（繰り返し）する
 		if len(vio.inputLines) == 0 {
 			// TODO 入力がないときブロックするという機能を入れないと、無限に空文字列を読み続けてしまう。1秒は長いが、しかたない
-			time.Sleep(1 * time.Second)
+			time.Sleep(vio.pollingTime)
 
 			// 文字列取得
 			vio.inputLines = popAllLines()
