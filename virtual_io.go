@@ -20,6 +20,10 @@ type VirtualIO struct {
 // 新規作成
 //
 // - 行読取
+//
+// Parameters
+// ----------
+// setVIO - 初期化に使える
 func NewVirtualIO() *VirtualIO {
 	// 実体をメモリ上に占有させる
 	//
@@ -29,7 +33,8 @@ func NewVirtualIO() *VirtualIO {
 		writer:        bufio.NewWriter(os.Stdout),
 		inputFilePath: "",
 		inputLines:    []string{},
-		pollingTime:   1 * time.Second,
+		// 1秒は長いが、しかたない
+		pollingTime: 1 * time.Second,
 	}
 
 	// virtualIo.Scanner.Split(bufio.ScanWords) // 空白で区切る
@@ -39,6 +44,17 @@ func NewVirtualIO() *VirtualIO {
 
 	// バーチャルIOのアドレスを返す
 	return &virtualIo
+}
+
+// IsEmpty - 空っぽか
+func (vio *VirtualIO) IsEmpty() bool {
+	// １行以上存在し、０行目が空行なら、詰める
+	for len(vio.inputLines) != 0 && vio.inputLines[0] == "" {
+		vio.inputLines = vio.inputLines[1:len(vio.inputLines)]
+	}
+
+	// ０行なら空っぽ
+	return len(vio.inputLines) == 0
 }
 
 // ReplaceInputToFileLines - 標準入力を使うのをやめ、ファイルの先頭行から１行ずつ切り取る方法に変えます
@@ -74,16 +90,17 @@ func (vio *VirtualIO) ScannerScan() bool {
 		}
 
 		// バッファーが空なら、ファイルから取ってくる
-		if len(vio.inputLines) == 0 {
+		if vio.IsEmpty() {
+			// 全行取得
 			vio.inputLines = popAllLines()
 		}
 
 		// バッファーが空の間ブロック（繰り返し）する
-		if len(vio.inputLines) == 0 {
-			// TODO 入力がないときブロックするという機能を入れないと、無限に空文字列を読み続けてしまう。1秒は長いが、しかたない
+		for vio.IsEmpty() {
+			// スリープする。なぜなら、入力がないときブロックするという機能を入れないと、無限に空文字列を読み続けてしまうから
 			time.Sleep(vio.pollingTime)
 
-			// 文字列取得
+			// 全行取得
 			vio.inputLines = popAllLines()
 		}
 
