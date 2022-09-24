@@ -36,7 +36,7 @@ func readFile(fileName string) string {
 // Parameters
 // ----------
 // textToWrite - 書き込みたい文字列
-func stubStdin(textToWrite string, fn func()) {
+func stubStdin(inputText string, fn func()) {
 	// これより、ラムダ計算の専門用語で η（イータ）簡約 と呼ばれることと同じ考え方を利用する。
 	// Input ストリームと使い勝手が同等になるよう、 Read モードと Write モードのファイル（メモリ上に存在する）を取得
 	inr, inw, err := os.Pipe()
@@ -45,7 +45,7 @@ func stubStdin(textToWrite string, fn func()) {
 	}
 
 	// Input ストリームに書き込んでいるつもりで、 Write モードのファイルに書き込む
-	_, _ = inw.Write([]byte(textToWrite))
+	_, _ = inw.Write([]byte(inputText))
 	// 書込みをフラッシュして終わる
 	inw.Close()
 

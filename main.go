@@ -21,6 +21,6 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Fprintln(virtualIo.Writer, fmt.Sprintf("%d is ok", i)) // 出力
+		fmt.Fprintf(virtualIo.Writer, "%d is ok\n", i) // 出力
 	}
 }
