@@ -38,12 +38,12 @@ func NewVirtualIO() *VirtualIO {
 	return &virtualIo
 }
 
-// SetInputFromFile
+// ReplaceInputToFileLines - 標準入力を使うのをやめ、ファイルの先頭行から１行ずつ切り取る方法に変えます
 //
 // Parameters
 // ----------
 // inputFilePath - ファイルパス
-func (vio *VirtualIO) SetInputFromFile(inputFilePath string) {
+func (vio *VirtualIO) ReplaceInputToFileLines(inputFilePath string) {
 	vio.inputFilePath = inputFilePath
 }
 

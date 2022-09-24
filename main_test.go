@@ -5,6 +5,6 @@ import (
 )
 
 func TestMain(t *testing.T) {
-	virtualIo.SetInputFromFile("./test.input.txt")
+	virtualIo.ReplaceInputToFileLines("./test.input.txt")
 	main()
 }
