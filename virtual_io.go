@@ -53,23 +53,6 @@ func NewVirtualIO() *VirtualIO {
 // textToWrite - 書き込みたい文字列
 func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
 	vio.inputFilePath = inputFilePath
-
-	// これより、ラムダ計算の専門用語で η（イータ）簡約 と呼ばれることと同じ考え方を利用する。
-	// Input ストリームと使い勝手が同等になるよう、 Read モードと Write モードのファイル（メモリ上に存在する）を取得
-	inr, inw, err := os.Pipe()
-	if err != nil {
-		panic(err)
-	}
-
-	// Input ストリームに書き込んでいるつもりで、 Write モードのファイルに書き込む
-	_, _ = inw.Write([]byte(vio.inputText))
-	// 書込みをフラッシュして終わる
-	inw.Close()
-
-	// Input ストリームから読込んでいるつもりで、 Read モードのファイルを `os.Stdin` と差し替える
-	os.Stdin = inr
-	// このスキャナーは、標準入力をスキャンしているように見えて、メモリ上に存在するファイルをスキャンしている
-	virtualIo.scanner = bufio.NewScanner(os.Stdin)
 }
 
 func (vio *VirtualIO) ScannerScan() bool {
