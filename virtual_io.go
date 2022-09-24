@@ -3,12 +3,15 @@ package main
 import (
 	"bufio"
 	"os"
+	"time"
 )
 
 // VirtualIO - 入出力を模擬したもの
 type VirtualIO struct {
-	scanner *bufio.Scanner
-	writer  *bufio.Writer
+	scanner       *bufio.Scanner
+	writer        *bufio.Writer
+	inputFilePath string
+	inputText     string
 }
 
 // 新規作成
@@ -16,9 +19,13 @@ type VirtualIO struct {
 // - 行読取
 func NewVirtualIO() *VirtualIO {
 	// 実体をメモリ上に占有させる
+	//
+	// - 規定値：標準入出力
 	var virtualIo = VirtualIO{
-		scanner: bufio.NewScanner(os.Stdin),
-		writer:  bufio.NewWriter(os.Stdout),
+		scanner:       bufio.NewScanner(os.Stdin),
+		writer:        bufio.NewWriter(os.Stdout),
+		inputFilePath: "",
+		inputText:     "",
 	}
 
 	// virtualIo.Scanner.Split(bufio.ScanWords) // 空白で区切る
@@ -45,14 +52,7 @@ func NewVirtualIO() *VirtualIO {
 // ----------
 // textToWrite - 書き込みたい文字列
 func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
-	// ファイル読込
-	var bytes, err = os.ReadFile(inputFilePath)
-	if err != nil {
-		panic(err)
-	}
-
-	// 文字列化
-	var inputText = string(bytes)
+	vio.inputFilePath = inputFilePath
 
 	// これより、ラムダ計算の専門用語で η（イータ）簡約 と呼ばれることと同じ考え方を利用する。
 	// Input ストリームと使い勝手が同等になるよう、 Read モードと Write モードのファイル（メモリ上に存在する）を取得
@@ -62,7 +62,7 @@ func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
 	}
 
 	// Input ストリームに書き込んでいるつもりで、 Write モードのファイルに書き込む
-	_, _ = inw.Write([]byte(inputText))
+	_, _ = inw.Write([]byte(vio.inputText))
 	// 書込みをフラッシュして終わる
 	inw.Close()
 
@@ -73,10 +73,45 @@ func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
 }
 
 func (vio *VirtualIO) ScannerScan() bool {
+
+	// テキストファイルから読み込むなら
+	if vio.inputFilePath != "" {
+
+		var getText = func() string {
+			// ファイル読込
+			var bytes, err = os.ReadFile(vio.inputFilePath)
+			if err != nil {
+				panic(err)
+			}
+
+			return string(bytes)
+		}
+
+		// 文字列取得
+		vio.inputText = getText()
+
+		// 空文字でなくなるまでブロック（繰り返し）する
+		for vio.inputText == "" {
+			// TODO 入力がないときブロックするという機能を入れないと、無限に空文字列を読み続けてしまう。1秒は長いが、しかたない
+			time.Sleep(1 * time.Second)
+
+			// 文字列取得
+			vio.inputText = getText()
+		}
+
+		return true
+	}
+
 	return vio.scanner.Scan()
 }
 
 func (vio *VirtualIO) ScannerText() string {
+
+	// テキストファイルから読み込むなら
+	if vio.inputFilePath != "" {
+		return vio.inputText
+	}
+
 	return vio.scanner.Text()
 }
 
