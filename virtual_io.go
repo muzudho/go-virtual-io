@@ -37,21 +37,12 @@ func NewVirtualIO() *VirtualIO {
 	return &virtualIo
 }
 
-// Stubs Stdin in 'fn'
-// See also: 📖 [golangのAtCoder向けデバック方法(VSCode)](https://qiita.com/tasmas/items/d2d5a8c95fa48e415702)
-//
-// Examples
-// --------
-// inbuf := "入力されたつもりの文字列。テキストファイルから読み込んでくる"
-//
-//	StubStdin("ファイル名", func() {
-//	    main()
-//	})
+// SetInputFromFile
 //
 // Parameters
 // ----------
-// textToWrite - 書き込みたい文字列
-func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
+// inputFilePath - ファイルパス
+func (vio *VirtualIO) SetInputFromFile(inputFilePath string) {
 	vio.inputFilePath = inputFilePath
 }
 
