@@ -44,10 +44,9 @@ func NewVirtualIO() *VirtualIO {
 // Parameters
 // ----------
 // textToWrite - 書き込みたい文字列
-func StubStdin(filePath string, fn func()) {
-
+func (vio *VirtualIO) SetupStubStdin(inputFilePath string) {
 	// ファイル読込
-	var bytes, err = os.ReadFile(filePath)
+	var bytes, err = os.ReadFile(inputFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -71,11 +70,6 @@ func StubStdin(filePath string, fn func()) {
 	os.Stdin = inr
 	// このスキャナーは、標準入力をスキャンしているように見えて、メモリ上に存在するファイルをスキャンしている
 	virtualIo.scanner = bufio.NewScanner(os.Stdin)
-
-	// あとは ふつうに処理を行う
-	fn()
-
-	// TODO `os.Stdin` を元に戻さなくていいのか？ fn() が main() プログラムと同等で、あとは終了するるだけなら 良いとはいえるが
 }
 
 func (vio *VirtualIO) ScannerScan() bool {

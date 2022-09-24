@@ -5,7 +5,6 @@ import (
 )
 
 func TestMain(t *testing.T) {
-	StubStdin("./test.txt", func() {
-		main()
-	})
+	virtualIo.SetupStubStdin("./test.txt")
+	main()
 }
