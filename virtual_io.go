@@ -37,14 +37,24 @@ func NewVirtualIO() *VirtualIO {
 // --------
 // inbuf := "入力されたつもりの文字列。テキストファイルから読み込んでくる"
 //
-//	stubStdin(inbuf, func() {
+//	StubStdin("ファイル名", func() {
 //	    main()
 //	})
 //
 // Parameters
 // ----------
 // textToWrite - 書き込みたい文字列
-func StubStdin(inputText string, fn func()) {
+func StubStdin(filePath string, fn func()) {
+
+	// ファイル読込
+	var bytes, err = os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	// 文字列化
+	var inputText = string(bytes)
+
 	// これより、ラムダ計算の専門用語で η（イータ）簡約 と呼ばれることと同じ考え方を利用する。
 	// Input ストリームと使い勝手が同等になるよう、 Read モードと Write モードのファイル（メモリ上に存在する）を取得
 	inr, inw, err := os.Pipe()
