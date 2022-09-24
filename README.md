@@ -6,6 +6,22 @@ delveが標準入力でフリーズするので、標準入力とファイル入
 
 📖 [golangのAtCoder向けデバック方法(VSCode)](https://qiita.com/tasmas/items/d2d5a8c95fa48e415702)  
 
+# Test
+
+Input:  
+
+```plaintext
+go test
+```
+
+Output:  
+
+```plaintext
+10 is ok
+PASS
+ok      github.com/muzudho/go-virtual-io        0.194s
+```
+
 # Run
 
 Input:  
