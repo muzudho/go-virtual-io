@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -21,6 +20,6 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Fprintf(virtualIo.Writer, "%d is ok\n", i) // 出力
+		virtualIo.Printf("%d is ok\n", i) // 出力
 	}
 }

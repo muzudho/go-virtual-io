@@ -7,8 +7,8 @@ import (
 
 // VirtualIO - 入出力を模擬したもの
 type VirtualIO struct {
-	Scanner *bufio.Scanner
-	Writer  *bufio.Writer
+	scanner *bufio.Scanner
+	writer  *bufio.Writer
 }
 
 // 新規作成
@@ -17,14 +17,14 @@ type VirtualIO struct {
 func NewVirtualIO() *VirtualIO {
 	// 実体をメモリ上に占有させる
 	var virtualIo = VirtualIO{
-		Scanner: bufio.NewScanner(os.Stdin),
-		Writer:  bufio.NewWriter(os.Stdout),
+		scanner: bufio.NewScanner(os.Stdin),
+		writer:  bufio.NewWriter(os.Stdout),
 	}
 
 	// virtualIo.Scanner.Split(bufio.ScanWords) // 空白で区切る
-	virtualIo.Scanner.Split(bufio.ScanLines) // 改行で区切る
+	virtualIo.scanner.Split(bufio.ScanLines) // 改行で区切る
 	// 入力バッファーのサイズを巨大にする
-	virtualIo.Scanner.Buffer([]byte{}, 100000007)
+	virtualIo.scanner.Buffer([]byte{}, 100000007)
 
 	// バーチャルIOのアドレスを返す
 	return &virtualIo
@@ -60,7 +60,7 @@ func StubStdin(inputText string, fn func()) {
 	// Input ストリームから読込んでいるつもりで、 Read モードのファイルを `os.Stdin` と差し替える
 	os.Stdin = inr
 	// このスキャナーは、標準入力をスキャンしているように見えて、メモリ上に存在するファイルをスキャンしている
-	virtualIo.Scanner = bufio.NewScanner(os.Stdin)
+	virtualIo.scanner = bufio.NewScanner(os.Stdin)
 
 	// あとは ふつうに処理を行う
 	fn()
@@ -69,13 +69,13 @@ func StubStdin(inputText string, fn func()) {
 }
 
 func (vio *VirtualIO) ScannerScan() bool {
-	return vio.Scanner.Scan()
+	return vio.scanner.Scan()
 }
 
 func (vio *VirtualIO) ScannerText() string {
-	return vio.Scanner.Text()
+	return vio.scanner.Text()
 }
 
 func (vio *VirtualIO) WriterFlush() {
-	virtualIo.Writer.Flush()
+	virtualIo.writer.Flush()
 }
