@@ -11,11 +11,11 @@ var virtualIo = NewVirtualIO()
 
 func main() {
 	// この関数を抜けるときに、バーチャルIOの出力バッファーをフラッシュする
-	defer virtualIo.Writer.Flush()
+	defer virtualIo.WriterFlush()
 
 	// 入力を読取る
-	if virtualIo.Scanner.Scan() {
-		var text = virtualIo.Scanner.Text()
+	if virtualIo.ScannerScan() {
+		var text = virtualIo.ScannerText()
 		var i, err = strconv.Atoi(text)
 		if err != nil {
 			panic(err)

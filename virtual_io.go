@@ -67,3 +67,15 @@ func StubStdin(inputText string, fn func()) {
 
 	// TODO `os.Stdin` を元に戻さなくていいのか？ fn() が main() プログラムと同等で、あとは終了するるだけなら 良いとはいえるが
 }
+
+func (vio *VirtualIO) ScannerScan() bool {
+	return vio.Scanner.Scan()
+}
+
+func (vio *VirtualIO) ScannerText() string {
+	return vio.Scanner.Text()
+}
+
+func (vio *VirtualIO) WriterFlush() {
+	virtualIo.Writer.Flush()
+}
